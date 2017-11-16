@@ -336,22 +336,28 @@ var GitlabTree = (function($) {
         $(snode.find('a'))[0].href = href;
 
 console.log(1);
-        if ($('.tree-content-holder').length > 0) {
-          console.log(2);
-          // 只能这样写否则就不work了……
-          $(document).pjax('.gitlab-tree nav a.jstree-clicked', '.tree-content-holder', {
-            fragment: '.tree-content-holder',
-            timeout: 9000
-          });
-        } else if ($('.blob-content-holder').length > 0) {
-          console.log(3);
-          $(document).pjax('.gitlab-tree nav a.jstree-clicked', '.blob-content-holder', {
-            fragment: '.blob-content-holder',
-            timeout: 9000
-          });
+
+        if ($('.content-wrapper').length > 0) {
+            $(document).pjax('.gitlab-tree nav a.jstree-clicked', '.content-wrapper', {
+                fragment: '.content-wrapper',
+                timeout: 9000
+            });
         }
 
-
+        // if ($('.tree-content-holder').length > 0) {
+        //   console.log(2);
+        //   // 只能这样写否则就不work了……
+        //   $(document).pjax('.gitlab-tree nav a.jstree-clicked', '.tree-content-holder', {
+        //     fragment: '.tree-content-holder',
+        //     timeout: 9000
+        //   });
+        // } else if ($('.blob-content-holder').length > 0) {
+        //   console.log(3);
+        //   $(document).pjax('.gitlab-tree nav a.jstree-clicked', '.blob-content-holder', {
+        //     fragment: '.blob-content-holder',
+        //     timeout: 9000
+        //   });
+        // }
 
       }
     });
