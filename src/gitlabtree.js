@@ -39,9 +39,36 @@ var GitlabTree = (function($) {
       var value = item[1];
       objXml[key] = value;
     }
-    for (var key in objXml) {
+
+    var isGitlabSite = false;
+    if(objXml['gon.gitlab_url']){
+        isGitlabSite = true;
+    }
+
+    if(!isGitlabSite){
+      return false;
+    }
+
+    for (var key in objXml) {//gitlab 8
       if (key === 'gon.api_token') {
         private_token = objXml[key];
+      }
+    }
+
+    if(!private_token){
+        private_token = window.localStorage.getItem("private_token");
+    }
+
+    if(!private_token){
+      private_token = $("#private-token").val();
+      if(!private_token) {
+          var accountUrl = window.location.origin + "/profile/account";
+          if (confirm("gitlab-tree插件提示: 检测到当前网站是gitlab网站,将会自动尝试跳转到" + accountUrl + "页面获取你的private_token，是否允许？（private_token获取到后只会保存在你本地localStorage下）")) {
+              window.location.href = accountUrl;
+          }
+          return false;
+      }else{
+          window.localStorage.setItem("private_token", private_token);
       }
     }
 
@@ -112,8 +139,11 @@ var GitlabTree = (function($) {
 
   // 判断当前是否是Files Tab
   var isFilesTab = function() {
+    if($(".project-show-files")){
+      return true;
+    }
 
-    var currentTabText = $('.project-navigation li.active a').text();
+    var currentTabText = $('.project-show-files').text();
     if (currentTabText === 'Files' || $('.nav.nav-sidebar li.active a').text().trim() === 'Files') {
       return true;
     }
@@ -169,7 +199,7 @@ var GitlabTree = (function($) {
                                             <i class="fa fa-lock"></i><a href="/groups/mobile" target="_blank"></a> / <span></span>\
                                         </div>\
                                         <i class="fa fa-code-fork"></i><span class="branch"></span>\
-                                        <a class="gitlabtree_toggle toggle-btn icon-white icon-arraw-left toggle-btn-color">\
+                                        <a class="gitlabtree_toggle toggle-btn icon-white icon-arraw-left toggle-btn-color fa fa-angle-left">\
                                             <div class="loader icon-loading" style="display: none;"></div>\
                                         </a>\
                                     </div>\
@@ -441,37 +471,29 @@ console.log(1);
     $('.open-tree i').removeClass('fa fa-spinner fa-spin');
   }
 
-  var checkRepos = function(repos) {
+  var checkRepo = function(objRepoInfo) {
     var result = true;
 
-    if (repos && repos.length > 0) {
-      for (var key in repos) {
-        var objRepoInfo = repos[key];
-        var path;
-        if (objRepoInfo.id == project_id) {
-          path = objRepoInfo.path;
-          repoName = objRepoInfo.name;
-          path_with_namespace = objRepoInfo.path_with_namespace;
-        }
-      }
+    path = objRepoInfo.path;
+    repoName = objRepoInfo.name;
+    path_with_namespace = objRepoInfo.path_with_namespace;
 
-      if (!path_with_namespace) {
-        path_with_namespace = $('.home a').attr('href');
-        var firstChar = path_with_namespace && path_with_namespace.substring(0, 1);
-        if (firstChar && firstChar === '/') {
-          path_with_namespace = path_with_namespace.substr(1);
-        }
+    if (!path_with_namespace) {
+      path_with_namespace = $('.home a').attr('href');
+      var firstChar = path_with_namespace && path_with_namespace.substring(0, 1);
+      if (firstChar && firstChar === '/') {
+        path_with_namespace = path_with_namespace.substr(1);
       }
+    }
 
-      if (!path_with_namespace) {
-        quit();
-        result = false;
-      }
+    if (!path_with_namespace) {
+      quit();
+      result = false;
+    }
 
-      if (!repository_ref) {
-        quit();
-        result = false;
-      }
+    if (!repository_ref) {
+      quit();
+      result = false;
     }
 
     return result;
@@ -533,12 +555,12 @@ console.log(1);
   }
 
   var getApiProjects = function() {
-    $.get(apiProjects, {
+    $.get(apiProjects + "/" + project_id, {
         private_token: private_token
       })
-      .done(function(repos) {
+      .done(function(repo) {
 
-        var checkResult = checkRepos(repos);
+        var checkResult = checkRepo(repo);
         if (checkResult == false) {
           return;
         }
@@ -587,6 +609,16 @@ if (jQuery) {
 
     GitlabTree.init();
     GitlabTree.action();
+
+    $(document).on('pjax:success', function() {
+      var url = $(".blob-viewer").attr("data-url");
+      $.get(url, function(resp){
+        $(".blob-viewer").html(resp.html);
+        $(".file-content").addClass("white");
+        $(".blob-viewer").attr("data-loading", "true");
+        $(".blob-viewer").attr("data-loaded", "true");
+      });
+    });
 
   });
 }

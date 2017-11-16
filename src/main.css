@@ -6,7 +6,7 @@
     background-color: rgba(247,247,247,1);
     z-index: 10000;
     position: fixed;
-    width: 300px;
+    width: 233px;
     height: 100%;
     border-right: 1px solid #ddd;
     transform: translate3d(0px, 0px, 0px);
@@ -14,14 +14,14 @@
 }
 
 .gitlab-tree header {
-    height: 47px;
-    width: 300px;
+    height: 67px;
+    width: 100%;
     border-right: 1px solid #ddd;
     background: #474D57;
     border-bottom: 1px solid #373D47;
     font-size: 16px;
     color: #fff;
-    padding-left: 30px;
+    padding-left: 13px;
     padding-top: 3px;
 }
 
@@ -85,7 +85,7 @@ a.gitlabtree_toggle {
     width: 30px;
     height: 30px;
     position: absolute;
-    top: 5px;
+    top: 25px;
     right: 15px;
 }
 
