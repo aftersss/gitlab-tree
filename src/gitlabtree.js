@@ -196,7 +196,7 @@ var GitlabTree = (function($) {
                                 <header>\
                                     <div class="head">\
                                         <div class="info">\
-                                            <i class="fa fa-lock"></i><a href="/groups/mobile" target="_blank"></a> / <span></span>\
+                                            <i class="fa fa-lock"></i><a href="/groups/mobile"></a> / <span></span>\
                                         </div>\
                                         <i class="fa fa-code-fork"></i><span class="branch"></span>\
                                         <a class="gitlabtree_toggle toggle-btn icon-white icon-arraw-left toggle-btn-color fa fa-angle-left">\
@@ -207,8 +207,12 @@ var GitlabTree = (function($) {
     htmlTemplate += '<nav></nav></div>';
     $('body').append(htmlTemplate);
 
-    $('.gitlab-tree div.info a').text(path_with_namespace.split('/')[0]);
-    $('.gitlab-tree div.info span').text(path_with_namespace.split('/')[1]);
+    var codeGroup = path_with_namespace.split('/')[0];
+    var projName = path_with_namespace.split('/')[1];
+
+    $('.gitlab-tree div.info a').text(codeGroup);
+    $('.gitlab-tree div.info a').attr("href", "/" + codeGroup);
+    $('.gitlab-tree div.info span').html("<a style='padding-left:0px;' href='/" + path_with_namespace + "'>" + projName + "</a>");
     $('.gitlab-tree span.branch').text(repository_ref);
   }
 
@@ -422,11 +426,15 @@ console.log(1);
   }
 
   var hideGitlabTree = function() {
+    if($(".nav-sidebar").hasClass("sidebar-icons-only")){
+        $(".page-with-new-sidebar").addClass("page-with-icon-sidebar");
+    }
     $('.gitlab-tree').hide('fast');
     updateLayoutUI('hide');
   }
 
   var showGitlabTree = function() {
+    $(".page-with-new-sidebar").removeClass("page-with-icon-sidebar");
     $('.gitlab-tree').show('fast');
     updateLayoutUI('show');
   }
