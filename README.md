@@ -30,5 +30,5 @@ Chrome extension to display Gitlab code in tree format. Useful for developers wh
 ![](./docs/gitlab-tree.png)
 
 
-<center>code with :heart: by aftersss</center>
+<center>code with :heart: by aftersss. </center>
 <center>fork from:<a href="https://github.com/FrankFan/gitlab-tree">FrankFan's gitlab-tree</a></center>
